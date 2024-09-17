@@ -30,7 +30,7 @@ struct MainTabView: View {
                 }
                 .tag(2)
             
-            Text("ProfileView")
+            CurrentUserProfileView(user: MockData.users[0])
                 .tabItem {
                     Image(systemName: "person")
                 }
@@ -42,4 +42,5 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView()
+        .environmentObject(MatchManager())
 }

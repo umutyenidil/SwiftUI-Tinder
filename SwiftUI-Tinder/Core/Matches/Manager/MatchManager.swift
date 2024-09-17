@@ -6,3 +6,16 @@
 //
 
 import Foundation
+
+@MainActor
+class MatchManager: ObservableObject {
+    @Published var matchedUser: UserModel?
+    
+    func checkForMatch(withUser user: UserModel) {
+        let didMatch = Bool.random()
+        
+        if didMatch {
+            matchedUser = user
+        }
+    }
+}

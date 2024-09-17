@@ -11,4 +11,5 @@ class CardViewModel: ObservableObject {
     @Published var xOffset: CGFloat = 0.0
     @Published var degrees: Double = 0.0
     @Published var currentImageIndex: Int = 0
+    @Published var showProfileSheet = false
 }

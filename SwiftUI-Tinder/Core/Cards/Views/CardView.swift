@@ -9,6 +9,8 @@ import SwiftUI
 import Kingfisher
 
 struct CardView: View {
+    @EnvironmentObject var matchManager: MatchManager
+    
     @ObservedObject var parentViewModel: CardStackViewModel
     let model: CardModel
     
@@ -31,8 +33,14 @@ struct CardView: View {
                     .padding(.top, 20)
             }
             
-            UserInfoView(user: user)
+            UserInfoView(showProfileSheet: $viewModel.showProfileSheet, user: user)
         }
+        .fullScreenCover(isPresented: $viewModel.showProfileSheet) {
+            UserProfileView(user: user)
+        }
+        .onReceive(parentViewModel.$buttonSwipeAction, perform: { action in
+            onReceiveSwipeAction(action)
+        })
         .frame(width: SizeConstants.cardWidth, height: SizeConstants.cardHeight)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .offset(x: viewModel.xOffset)
@@ -57,6 +65,21 @@ private extension CardView {
 }
 
 private extension CardView {
+    func onReceiveSwipeAction(_ action: SwipeAction?) {
+        guard let action else { return }
+        
+        let topCard = parentViewModel.cardModels.last
+        
+        if topCard == model {
+            switch action {
+            case .reject:
+                swipeLeft()
+            case .like:
+                swipeRight()
+            }
+        }
+    }
+    
     func returnToCenter() {
         viewModel.xOffset = 0
         viewModel.degrees = 0
@@ -68,6 +91,7 @@ private extension CardView {
             viewModel.degrees = 12
         } completion: {
             parentViewModel.removeCard(model)
+            matchManager.checkForMatch(withUser: user)
         }
     }
     
